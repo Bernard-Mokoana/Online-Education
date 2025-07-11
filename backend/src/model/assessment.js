@@ -5,13 +5,17 @@ const assessmentSchema = new Schema(
     lessonId: {
       type: Schema.Types.ObjectId,
       ref: "lesson",
+      required: true,
     },
     questions: {
-      type: String,
-      default: 0,
+      question: String,
+      Options: [String],
+      correctAnswer: String,
     },
     type: {
       type: String,
+      enum: ["quiz", "assessment"],
+      default: "quiz",
     },
   },
   { timestamps: true }

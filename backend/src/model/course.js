@@ -10,17 +10,19 @@ const courseSchema = new Schema(
       type: String,
       required: true,
     },
+    description: String,
     price: {
       type: Number,
-      required: true,
+      default: 0,
     },
-    tutorId: {
+    tutor: {
       type: Schema.Types.ObjectId,
-      ref: "tutor",
+      ref: "user",
+      required: true,
     },
     isPublished: {
       type: Boolean,
-      required: true,
+      default: false,
     },
   },
   { timestamps: true }

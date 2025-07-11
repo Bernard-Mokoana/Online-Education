@@ -4,6 +4,7 @@ const lessonSchema = new Schema({
   courseId: {
     type: Schema.Types.ObjectId,
     ref: "course",
+    required: true,
   },
   title: {
     type: String,
@@ -11,12 +12,11 @@ const lessonSchema = new Schema({
   },
   videoUrl: {
     type: String,
-    required: true,
   },
   content: {
-    type: Number,
-    default: 0,
+    type: String,
   },
+  Order: Number,
 });
 
 export const lessons = mongoose.model("lessons", lessonSchema);

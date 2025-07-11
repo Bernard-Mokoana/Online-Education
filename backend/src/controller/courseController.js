@@ -112,10 +112,4 @@ const deleteCourse = async (req, res) => {
   }
 };
 
-export default {
-  createCourse,
-  getCourse,
-  getCourseById,
-  updateCourse,
-  deleteCourse,
-};
+export { createCourse, getCourse, getCourseById, updateCourse, deleteCourse };

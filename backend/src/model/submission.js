@@ -4,24 +4,25 @@ const submissionSchema = new Schema({
   assessmentId: {
     type: Schema.Types.ObjectId,
     ref: "assessment",
+    required: true,
   },
   studentId: {
     type: Schema.Types.ObjectId,
     ref: "user",
+    required: true,
   },
   answers: {
-    type: String,
-    required: true,
+    type: [String],
   },
   score: {
     type: Number,
-    default: 0,
-    required: true,
   },
   gradeBy: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
   },
 });
+
+submissionSchema({ assessment: 1, student: 1 }, { unique: true });
 
 export const submission = mongoose.model("submission", submissionSchema);

@@ -21,15 +21,16 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
-      minLength: [8, "Password must be 8 characters long"],
+      minLength: [6, "Password must be 6 characters long"],
     },
     role: {
       type: String,
       enum: ["Student", "Admin", "Tutor"],
-      required: true,
+      default: "Student",
     },
     isVerified: {
       type: Boolean,
+      default: false,
     },
   },
   {

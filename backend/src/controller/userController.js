@@ -55,16 +55,16 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, User.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ userId: user._id }, ACCESS_TOKEN_SECRET, {
+    const token = jwt.sign({ userId: User._id }, ACCESS_TOKEN_SECRET, {
       expiresIn: ACCESS_TOKEN_EXPIRY,
     });
 
-    const refreshToken = jwt.sign({ userId: user._id }, REFRESH_TOKEN_SECRET, {
+    const refreshToken = jwt.sign({ userId: User._id }, REFRESH_TOKEN_SECRET, {
       expiresIn: REFRESH_TOKEN_EXPIRY,
     });
 
@@ -72,7 +72,7 @@ export const login = async (req, res) => {
       message: "User login successfully ",
       token,
       refreshToken,
-      user: { id: user._id, email: user.email },
+      user: { id: User._id, email: User.email },
     });
   } catch (error) {
     return res

@@ -1,7 +1,6 @@
 import { user } from "../model/user.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { user } from "../model/user.js";
 
 dotenv.config({
   path: "./.env",

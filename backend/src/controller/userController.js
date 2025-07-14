@@ -13,10 +13,10 @@ const REFRESH_TOKEN_SECRET = process.env.ACCESS_TOKEN_EXPIRY;
 const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY;
 
 export const register = async (req, res) => {
-  const { fullName, lastName, email, password, role } = req.body;
+  const { firstName, lastName, email, password, role } = req.body;
 
   try {
-    if (!fullName || !lastName || !email || !password || !role)
+    if (!firstName || !lastName || !email || !password || !role)
       return res.status(400).json({ message: "All fields are required" });
 
     const existingUser = await user.findOne({ email });
@@ -28,7 +28,7 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await user.create({
-      fullName,
+      firstName,
       lastName,
       email,
       password: hashedPassword,
@@ -39,9 +39,7 @@ export const register = async (req, res) => {
       .status(201)
       .json({ message: "User created successfully", newUser });
   } catch (error) {}
-  return res
-    .status(500)
-    .json({ message: "Failed to create a user", error: error.message });
+  return res.status(500).json({ message: "Failed to create a user" });
 };
 
 export const login = async (req, res) => {
@@ -80,5 +78,51 @@ export const login = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Error logging a user", error: error.message });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const User = await user.findById(req.user._id).select("-password");
+    return res.status(200).json({ message: "User fetched successfully", User });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Failed to fetched the user", error: error.message });
+  }
+};
+
+export const updateUserProfile = async (req, res) => {
+  try {
+    const User = await user.findById(req.user._id);
+
+    if (!User) return res.status(404).json({ message: "user not found" });
+
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    if (req.body.password) {
+      user.password = await bcrypt.hash(req.body.password, 10);
+    }
+
+    const updated = await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "user updated successfully", updated });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Failed to update the user", error: error.message });
+  }
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = user.find().select("-password");
+    return res.status(200).json({ message: "Users fetch successfully", users });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch users", error: error.message });
   }
 };

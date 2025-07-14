@@ -33,3 +33,10 @@ export const verifyJwt = async (req, res, next) => {
     return res.status(401).json({ message: "Token Invalid or expired" });
   }
 };
+
+export const adminOnly = (req, res, next) => {
+  if (req.user?.role !== "Admin") {
+    return res.status(403).json({ message: "Admin only route" });
+  }
+  next();
+};

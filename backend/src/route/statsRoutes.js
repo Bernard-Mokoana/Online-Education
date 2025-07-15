@@ -13,13 +13,13 @@ import {
   adminOnly,
 } from "../middleware/authMiddleware.js";
 
-const route = express.Router();
+const router = express.Router();
 
-route.get("/popular-courses", getPopularCourses);
-route.get("/tutor-earnings", verifyJwt, tutorOnly, getTutorEarnings);
-route.get("/student-progress", verifyJwt, getStudentProgress);
-route.get("/monthly-revenue", verifyJwt, adminOnly, getMonthlyRevenue);
-route.get("/course-category-stats", getCourseCategoryStats);
-route.get("/top-tutors-this-month", getTopTutorsThisMonth);
+router.get("/popular-courses", getPopularCourses);
+router.get("/tutor-earnings", verifyJwt, tutorOnly, getTutorEarnings);
+router.get("/student-progress", verifyJwt, getStudentProgress);
+router.get("/monthly-revenue", verifyJwt, adminOnly, getMonthlyRevenue);
+router.get("/category-stats", getCourseCategoryStats);
+router.get("/top-tutors", getTopTutorsThisMonth);
 
-export default route;
+export default router;

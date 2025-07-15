@@ -1,7 +1,7 @@
 import { enrollment } from "../model/enrollment.js";
 import { course } from "../model/course.js";
 import { Transaction } from "mongodb";
-
+import dayjs from "dayjs";
 export const getPopularCourses = async (req, res) => {
   try {
     const results = await enrollment.aggregate([
@@ -110,3 +110,114 @@ export const getStudentProgress = async (req, res) => {
       .json({ message: "Error fetching student progress summary" });
   }
 };
+
+export const getMonthlyRevenue = async (req, res) => {
+  try {
+    const currentYear = new Date().getFullYear();
+
+    const result = await Transaction.aggregate([
+      { $match: { status: "success" } },
+      {
+        $project: {
+          amount: 1,
+          month: { $month: "$date" },
+          year: { $year: "$date" },
+        },
+      },
+      { $match: { year: currentYear } },
+      {
+        $group: {
+          _id: "$month",
+          totalRevenue: { $sum: "$amount" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const monthlyRevenue = Array.from({ length: 12 }, (_, i) => {
+      const entry = result.find((r) => r._id === i + 1);
+      return {
+        month: dayjs().month(i).format("MMMM"),
+        totalRevenue: entry?.totalRevenue || 0,
+      };
+    });
+
+    return res.status(200).json({
+      message: "Monthly revenue generated successfully",
+      monthlyRevenue,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error generating monthly revenue" });
+  }
+};
+
+export const getCourseCategoryStats = async (req, res) => {
+  try {
+    const result = await course.aggregate([
+      {
+        $lookup: {
+          from: "enrollments",
+          localFiled: "_id",
+          foreignField: "course",
+          as: "enrollments",
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          numCourses: { $sum: 1 },
+          totalEnrolled: { $sum: { $size: "$enrollments" } },
+        },
+      },
+      { $sort: { totlaEnrolled: -1 } },
+    ]);
+
+    return res
+      .status(200)
+      .json({ message: "Course category stats fetched successfully", result });
+  } catch (error) {
+    return (
+      res, status(500).json({ message: "Error fetching the course category" })
+    );
+  }
+};
+
+export const getTopTutorsThisMonth = async (req, res) => {
+  try {
+    const now = new Date();
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+ const results = await Transaction.aggregate([
+  {
+    $match: { 
+    status: 'success',
+    date: { $gte: firstDay, $lte: lastDay },
+  },
+},
+{
+  $lookup: {
+    from: 'courses',
+    localField: 'course',
+    foreignField: '_id',
+    as: 'courseDetails',
+  },
+},
+{ $unwind: '$courseDetails'}
+{
+  $group: {
+    _id: '$courseDetails.tutor',
+    totalEarnings: { $sum: '$amount'},
+  },
+},
+{ $sort: { totalEarnings: -1 }},
+{ $limit: 5 },
+  ]);
+
+  return res.status(200).json({ message: "Top tutors fetched successfully", results})
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching top tutors"})
+  }
+}

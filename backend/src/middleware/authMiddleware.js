@@ -37,3 +37,9 @@ export const adminOnly = (req, res, next) => {
   }
   next();
 };
+
+export const tutorOnly = (req, res, next) => {
+  if (req.user?.role !== "Tutor")
+    return res.status(403).json({ message: "Tutor only route" });
+  next();
+};

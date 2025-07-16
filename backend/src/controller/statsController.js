@@ -1,6 +1,6 @@
 import { enrollment } from "../model/enrollment.js";
 import { course } from "../model/course.js";
-import { Transaction } from "mongodb";
+import { Transaction } from "../model/transaction.js";
 import dayjs from "dayjs";
 export const getPopularCourses = async (req, res) => {
   try {
@@ -171,7 +171,7 @@ export const getCourseCategoryStats = async (req, res) => {
           totalEnrolled: { $sum: { $size: "$enrollments" } },
         },
       },
-      { $sort: { totlaEnrolled: -1 } },
+      { $sort: { totalEnrolled: -1 } },
     ]);
 
     return res
@@ -187,37 +187,39 @@ export const getCourseCategoryStats = async (req, res) => {
 export const getTopTutorsThisMonth = async (req, res) => {
   try {
     const now = new Date();
-  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
- const results = await Transaction.aggregate([
-  {
-    $match: { 
-    status: 'success',
-    date: { $gte: firstDay, $lte: lastDay },
-  },
-},
-{
-  $lookup: {
-    from: 'courses',
-    localField: 'course',
-    foreignField: '_id',
-    as: 'courseDetails',
-  },
-},
-{ $unwind: '$courseDetails'}
-{
-  $group: {
-    _id: '$courseDetails.tutor',
-    totalEarnings: { $sum: '$amount'},
-  },
-},
-{ $sort: { totalEarnings: -1 }},
-{ $limit: 5 },
-  ]);
+    const results = await Transaction.aggregate([
+      {
+        $match: {
+          status: "success",
+          date: { $gte: firstDay, $lte: lastDay },
+        },
+      },
+      {
+        $lookup: {
+          from: "courses",
+          localField: "course",
+          foreignField: "_id",
+          as: "courseDetails",
+        },
+      },
+      { $unwind: "$courseDetails" },
+      {
+        $group: {
+          _id: "$courseDetails.tutor",
+          totalEarnings: { $sum: "$amount" },
+        },
+      },
+      { $sort: { totalEarnings: -1 } },
+      { $limit: 5 },
+    ]);
 
-  return res.status(200).json({ message: "Top tutors fetched successfully", results})
+    return res
+      .status(200)
+      .json({ message: "Top tutors fetched successfully", results });
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching top tutors"})
+    return res.status(500).json({ message: "Error fetching top tutors" });
   }
-}
+};

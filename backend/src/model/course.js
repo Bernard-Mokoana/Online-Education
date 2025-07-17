@@ -22,7 +22,6 @@ const courseSchema = new Schema(
     },
     isPublished: {
       type: Boolean,
-      default: false,
     },
   },
   { timestamps: true }

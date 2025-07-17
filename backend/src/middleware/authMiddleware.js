@@ -12,34 +12,43 @@ export const verifyJwt = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token)
-      return res.status(401).json({ message: "No token, not authorized" });
+      return res.status(401).json({ message: "Authorization required" });
 
     const decoded = jwt.verify(token, accessToken);
 
-    const User = user
+    const foundUser = await user
       .findById(decoded.userId)
-      .select("-password -refreshToken");
+      .select("-password -refreshToken")
+      .lean();
 
-    if (!User) {
-      return res.status(401).json({ message: "Unauthorized" });
+    if (!foundUser) {
+      return res.status(401).json({ message: "User not found" });
     }
 
-    req.user = User;
+    req.user = foundUser;
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Token Invalid or expired" });
+    console.error("JWT verification error: ", error.message);
+
+    return res
+      .status(401)
+      .json({ message: "Token Invalid or expired", error: error.message });
   }
 };
 
 export const adminOnly = (req, res, next) => {
   if (req.user?.role !== "Admin") {
-    return res.status(403).json({ message: "Admin only route" });
+    return res.status(403).json({ message: "Admin access required" });
   }
   next();
 };
 
 export const tutorOnly = (req, res, next) => {
-  if (req.user?.role !== "Tutor")
-    return res.status(403).json({ message: "Tutor only route" });
+  if (!req.user) return res.status(401).json({ message: "Not authenticated" });
+
+  if (req.user.role !== "Tutor")
+    return res
+      .status(403)
+      .json({ message: "Tutor access required", yourRole: req.user.role });
   next();
 };

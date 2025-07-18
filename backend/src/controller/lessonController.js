@@ -15,8 +15,8 @@ export const getLessonsByCourse = async (req, res) => {
 
 export const getLessonById = async (req, res) => {
   try {
-    const { lessonId } = req.params.id;
-    const lesson = await lessons.findById(lessonId);
+    const { id } = req.params;
+    const lesson = await lessons.findById(id);
 
     if (!lesson) return res.status(404).json({ message: "Lesson not found" });
 

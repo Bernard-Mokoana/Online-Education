@@ -1,24 +1,34 @@
 import mongoose, { Schema } from "mongoose";
 
+const progressSchema = new Schema({
+  lesson: {
+    type: Schema.Types.ObjectId,
+    ref: "lessons",
+    required: true,
+  },
+  completed: {
+    type: Boolean,
+    default: false,
+  },
+  completedAt: Date,
+});
+
 const enrollmentSchema = new Schema(
   {
-    studentId: {
+    student: {
       type: Schema.Types.ObjectId,
       ref: "user",
       required: true,
     },
-    courseId: {
+    course: {
       type: Schema.Types.ObjectId,
       ref: "course",
       required: true,
     },
-    progress: {
-      type: Number,
-      default: 0,
-    },
-    isComplete: {
-      type: Boolean,
-      default: false,
+    progress: [progressSchema],
+    enrolledAt: {
+      type: Date,
+      default: Date.now(),
     },
     certificateUrl: {
       type: String,

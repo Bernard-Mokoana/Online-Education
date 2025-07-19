@@ -5,7 +5,7 @@ import {
   getSubmissionById,
   updateSubmissionGrade,
   deleteSubmission,
-} from "../controller/submissionController";
+} from "../controller/submissionController.js";
 
 const router = express.Router();
 

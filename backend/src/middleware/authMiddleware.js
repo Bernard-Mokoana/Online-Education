@@ -52,3 +52,12 @@ export const tutorOnly = (req, res, next) => {
       .json({ message: "Tutor access required", yourRole: req.user.role });
   next();
 };
+
+export const studentOnly = (req, res, next) => {
+  if (!req.user) return res.status(401).json({ message: "Not authenticated" });
+
+  if (req.user.role !== "Student")
+    return res.status(403).json({ message: "Student access required" });
+
+  next();
+};

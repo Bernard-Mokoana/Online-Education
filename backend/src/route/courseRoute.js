@@ -10,10 +10,15 @@ import { verifyJwt, tutorOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", verifyJwt, tutorOnly, createCourse);
-router.get("/", verifyJwt, getCourse);
-router.get("/:id", verifyJwt, getCourseById);
-router.put("/:id", verifyJwt, tutorOnly, updateCourse);
-router.delete("/:id", verifyJwt, tutorOnly, deleteCourse);
+router
+  .route("/")
+  .post(tutorOnly, verifyJwt, createCourse)
+  .get(verifyJwt, getCourse);
+
+router
+  .route("/:id")
+  .get(verifyJwt, getCourseById)
+  .put(tutorOnly, verifyJwt, updateCourse)
+  .delete(tutorOnly, verifyJwt, deleteCourse);
 
 export default router;

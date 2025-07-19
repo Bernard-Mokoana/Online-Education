@@ -1,4 +1,4 @@
-import { submission } from "../model/submission";
+import { submission } from "../model/submission.js";
 
 export const createSubmission = async (req, res) => {
   try {

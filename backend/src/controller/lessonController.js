@@ -1,6 +1,43 @@
 import { lessons } from "../model/lessons.js";
 import { course } from "../model/course.js";
 
+export const createLesson = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { title, content, videoUrl, order } = req.body;
+
+    if (!title || !content || !videoUrl || order === undefined)
+      return res.status(400).json({ message: "Course not found" });
+
+    const existingCourse = await course.findById(courseId);
+
+    if (!existingCourse)
+      return res.status(404).json({ message: "Course not found" });
+
+    if (existingCourse.tutor.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "You do not own this course" });
+    }
+
+    const newLesson = await lessons.create({
+      course: courseId,
+      title,
+      content,
+      videoUrl,
+      order,
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Lesson created successfully", newLesson });
+  } catch (error) {
+    console.error("Error in creating a lesson", error);
+
+    return res
+      .status(500)
+      .json({ message: "Error creating a lesson", error: error.message });
+  }
+};
+
 export const getLessonsByCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -28,36 +65,6 @@ export const getLessonById = async (req, res) => {
   }
 };
 
-export const createLesson = async (req, res) => {
-  try {
-    const { courseId } = req.params;
-    const { title, content, videoUrl, order } = req.body;
-
-    const Course = await course.findById(courseId);
-
-    if (!Course) return res.status(404).json({ message: "Course not found" });
-    if (!Course.tutor.equals(req.user._id)) {
-      return res.status(403).json({ message: "You do not own this course" });
-    }
-
-    const Lesson = await lessons.create({
-      course: courseId,
-      title,
-      content,
-      videoUrl,
-      order,
-    });
-
-    return res
-      .status(200)
-      .json({ message: "Lesson created successfully", Lesson });
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error creating a lesson", error: error.message });
-  }
-};
-
 export const updateLesson = async (req, res) => {
   try {
     const { id } = req.params;
@@ -66,7 +73,7 @@ export const updateLesson = async (req, res) => {
     const lesson = await lessons.findById(id);
     if (!lesson) return res.status(404).json({ message: "Lesson not found" });
 
-    const Course = await course.findById(lesson.Course);
+    const Course = await course.findById(lesson.course);
     if (!Course.tutor.equals(req.user._id)) {
       return res.status(403).json({ message: "Unauthorized" });
     }
@@ -95,9 +102,9 @@ export const deleteLesson = async (req, res) => {
     const lesson = await lessons.findById(id);
     if (!lesson) return res.status(404).json({ message: "lesson not found" });
 
-    const Course = await course.findById(lesson.Course);
+    const Course = await course.findById(lesson.course);
 
-    if (!Course.tutor.equals.equals(req.user._id)) {
+    if (!Course.tutor.equals(req.user._id)) {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
@@ -105,6 +112,8 @@ export const deleteLesson = async (req, res) => {
 
     return res.status(200).json({ message: "Lesson deleted successfully" });
   } catch (error) {
-    return res.status(500).json({ message: "Error deleting a lesson" });
+    return res
+      .status(500)
+      .json({ message: "Error deleting a lesson", error: error.message });
   }
 };

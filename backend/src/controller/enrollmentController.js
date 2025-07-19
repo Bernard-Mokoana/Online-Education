@@ -1,8 +1,9 @@
 import { enrollment } from "../model/enrollment.js";
 import { lessons } from "../model/lessons.js";
+import mongoose from "mongoose";
 
 export const enrollInCourse = async (req, res) => {
-  const { userId, courseId } = req.body;
+  const { userId, courseId, progress } = req.body;
 
   try {
     const Lesson = await lessons.find({ course: courseId });
@@ -12,7 +13,7 @@ export const enrollInCourse = async (req, res) => {
     }));
 
     const Enrollment = await enrollment.create({
-      user: userId,
+      student: userId,
       course: courseId,
       progress,
     });
@@ -29,18 +30,25 @@ export const enrollInCourse = async (req, res) => {
 
 export const getUserEnrollments = async (req, res) => {
   try {
-    const Enrollment = await enrollment
-      .find({ user: req.params.userId })
+    const { userId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(userId))
+      return res.status(400).json({ message: "Invalid userId format" });
+
+    const enrollments = await enrollment
+      .find({ student: userId })
       .populate("course")
       .populate("progress.lesson");
 
-    return res
-      .status(200)
-      .json({ message: "Fetch a student enrollments", Enrollment });
+    return res.status(200).json({
+      message: "Student enrollments successfully fetched",
+      enrollments,
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error fetching a student enrollments" });
+    return res.status(500).json({
+      message: "Error fetching a student enrollments",
+      error: error.message,
+    });
   }
 };
 

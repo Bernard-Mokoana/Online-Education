@@ -25,4 +25,4 @@ const lessonSchema = new Schema(
   { timestamps: true }
 );
 
-export const lessons = mongoose.model("lessons", lessonSchema);
+export const lessons = mongoose.model("lesson", lessonSchema);

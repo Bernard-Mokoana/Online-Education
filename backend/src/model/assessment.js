@@ -2,7 +2,7 @@ import mongoose, { mongo, Schema } from "mongoose";
 
 const assessmentSchema = new Schema(
   {
-    lessonId: {
+    lesson: {
       type: Schema.Types.ObjectId,
       ref: "lesson",
       required: true,
@@ -14,7 +14,7 @@ const assessmentSchema = new Schema(
     },
     type: {
       type: String,
-      enum: ["quiz", "assessment"],
+      enum: ["quiz", "assessment", "exam"],
       default: "quiz",
     },
   },

@@ -12,6 +12,7 @@ import enrollmentRoute from "./route/enrollmentRoute.js";
 import submissionRoute from "./route/submissionRoute.js";
 import transactionRoute from "./route/transactionRoute.js";
 import assessmentRoute from "./route/assessmentRoute.js";
+import reportRoute from "./route/reportRoute.js";
 
 app.use("/api/v1/courses", courseRoute);
 app.use("/api/v1/users", userRoute);
@@ -21,5 +22,6 @@ app.use("/api/v1/enrollments", enrollmentRoute);
 app.use("/api/v1/submission", submissionRoute);
 app.use("/api/v1/transaction", transactionRoute);
 app.use("/api/v1/assessments", assessmentRoute);
+app.use("/api/v1/reports", reportRoute);
 
 export default app;

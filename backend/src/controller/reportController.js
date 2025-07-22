@@ -30,8 +30,6 @@ export const averageGradePerCourse = async (req, res) => {
       },
     ]);
 
-    console.log(results);
-
     return res
       .status(200)
       .json({ message: "Average grade calculated successfully", results });

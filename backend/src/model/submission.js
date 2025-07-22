@@ -21,14 +21,15 @@ const submissionSchema = new Schema(
       type: Number,
       default: 0,
     },
-    gradeBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
-    },
+    // gradeBy: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "user",
+    // },
     submittedAt: {
       type: Date,
       default: Date.now(),
     },
+    isCompleted: Boolean,
   },
   { timestamps: true }
 );

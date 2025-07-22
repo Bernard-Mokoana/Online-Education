@@ -10,7 +10,7 @@ import { verifyJwt, studentOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", createSubmission);
+router.post("/", verifyJwt, createSubmission);
 router.get("/lesson/:lessonId", getSubmissionByLesson);
 router.patch("/:id/grade", updateSubmissionGrade);
 

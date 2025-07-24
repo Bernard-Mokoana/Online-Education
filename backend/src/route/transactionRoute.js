@@ -6,11 +6,14 @@ import {
   updateTransaction,
   deleteTransaction,
 } from "../controller/transactionController.js";
+import { verifyJwt, studentOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", createTransactions);
-router.get("/", getAllTransactions);
+router.use(verifyJwt);
+
+router.route("/").post(createTransactions).get(getAllTransactions);
+
 router.get("/user/:userId", getUserTransactions);
 router.put("/:id/status", updateTransaction);
 router.delete("/:id", deleteTransaction);

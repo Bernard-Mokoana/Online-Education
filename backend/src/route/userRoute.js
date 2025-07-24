@@ -6,16 +6,20 @@ import {
   getAllUsers,
 } from "../controller/userController.js";
 import express from "express";
-import { verifyJwt, adminOnly } from "../middleware/authMiddleware.js";
+import {
+  verifyJwt,
+  adminOnly,
+  studentOnly,
+} from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.post("/register", register);
+
+router.use(verifyJwt);
+
 router.post("/login", login);
-router
-  .route("/profile")
-  .get(verifyJwt, getUserProfile)
-  .put(verifyJwt, updateUserProfile);
-router.get("/", verifyJwt, adminOnly, getAllUsers);
+router.route("/profile").get(getUserProfile).put(updateUserProfile);
+router.get("/", adminOnly, getAllUsers);
 
 export default router;

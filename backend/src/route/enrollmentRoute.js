@@ -13,15 +13,11 @@ import {
 
 const router = express.Router();
 
-router.post("/enroll", verifyJwt, studentOnly, enrollInCourse);
-router.get(
-  "/user/:userId",
-  adminOnly,
-  studentOnly,
-  verifyJwt,
-  getUserEnrollments
-);
-router.patch("/complete", studentOnly, verifyJwt, markLessonComplete);
-router.delete("/:id", verifyJwt, studentOnly, adminOnly, deleteEnrollment);
+router.use(verifyJwt);
+
+router.post("/enroll", studentOnly, enrollInCourse);
+router.get("/user/:userId", adminOnly, studentOnly, getUserEnrollments);
+router.patch("/complete", markLessonComplete);
+router.delete("/:id", adminOnly, deleteEnrollment);
 
 export default router;

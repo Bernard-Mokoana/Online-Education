@@ -4,6 +4,8 @@ import { verifyJwt } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/check/:userId/:courseId", verifyJwt, checkCourseCompletion);
+router.use(verifyJwt);
+
+router.get("/check/:userId/:courseId", checkCourseCompletion);
 
 export default router;

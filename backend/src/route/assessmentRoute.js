@@ -9,17 +9,19 @@ import {
 import {
   verifyJwt,
   tutorOnly,
-  adminOnly,
+  studentOnly,
 } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", verifyJwt, tutorOnly, createAssessment);
+router.use(verifyJwt);
+
+router.post("/", tutorOnly, createAssessment);
 router
   .route("/:id")
-  .get(getAssessment)
-  .put(updateAssessment)
-  .delete(deleteAssessment);
-router.route("/:lessonId").get(getAssessmentByLesson);
+  .get(studentOnly, tutorOnly, getAssessment)
+  .put(tutorOnly, updateAssessment)
+  .delete(tutorOnly, deleteAssessment);
+router.get("/:lessonId", studentOnly, getAssessmentByLesson);
 
 export default router;

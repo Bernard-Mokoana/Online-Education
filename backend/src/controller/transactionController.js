@@ -32,11 +32,15 @@ export const getAllTransactions = async (req, res) => {
 
 export const getUserTransactions = async (req, res) => {
   try {
-    const transaction = await Transaction.find({ user: userId }).populate(
+    const { userId } = req.params;
+    const transaction = await Transaction.find({ student: userId }).populate(
       "course"
     );
 
-    return res.status(200).json(transaction);
+    return res.status(200).json({
+      message: "Transaction of the student fetched successfully",
+      transaction,
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -67,7 +71,7 @@ export const updateTransaction = async (req, res) => {
 
 export const deleteTransaction = async (req, res) => {
   try {
-    await Transaction.findByIdAndUpdate(req.params.id);
+    await Transaction.findByIdAndDelete(req.params.id);
 
     return res
       .status(200)

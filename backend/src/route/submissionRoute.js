@@ -6,13 +6,18 @@ import {
   updateSubmissionGrade,
   deleteSubmission,
 } from "../controller/submissionController.js";
-import { verifyJwt, studentOnly } from "../middleware/authMiddleware.js";
+import {
+  verifyJwt,
+  studentOnly,
+  tutorOnly,
+} from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+router.use(verifyJwt);
 
-router.post("/", verifyJwt, createSubmission);
-router.get("/lesson/:lessonId", getSubmissionByLesson);
-router.patch("/:id/grade", updateSubmissionGrade);
+router.post("/", studentOnly, createSubmission);
+router.get("/lesson/:lessonId", tutorOnly, getSubmissionByLesson);
+router.patch("/:id/grade", tutorOnly, updateSubmissionGrade);
 
 router.route("/:id").get(getSubmissionById).delete(deleteSubmission);
 

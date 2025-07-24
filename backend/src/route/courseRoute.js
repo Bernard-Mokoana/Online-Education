@@ -6,19 +6,25 @@ import {
   deleteCourse,
 } from "../controller/courseController.js";
 import express from "express";
-import { verifyJwt, tutorOnly } from "../middleware/authMiddleware.js";
+import {
+  verifyJwt,
+  tutorOnly,
+  studentOnly,
+} from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+router.use(verifyJwt);
+
 router
   .route("/")
-  .post(tutorOnly, verifyJwt, createCourse)
-  .get(verifyJwt, getCourse);
+  .post(tutorOnly, createCourse)
+  .get(studentOnly, tutorOnly, getCourse);
 
 router
   .route("/:id")
-  .get(verifyJwt, getCourseById)
-  .put(tutorOnly, verifyJwt, updateCourse)
-  .delete(tutorOnly, verifyJwt, deleteCourse);
+  .get(studentOnly, getCourseById)
+  .put(tutorOnly, updateCourse)
+  .delete(tutorOnly, deleteCourse);
 
 export default router;

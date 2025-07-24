@@ -9,17 +9,6 @@ export const createAssessment = async (req, res) => {
         .status(400)
         .json({ message: "Lesson Id and questions are required" });
 
-    // const isValidQuestions = questions.every(
-    //   (q) =>
-    //     q.questions && q.options && Array.isArray(q.options) && q.correctAnswer
-    // );
-
-    // if (!isValidQuestions)
-    //   return res.status(400).json({
-    //     message:
-    //       "Each question must have question text, options array, and correct answer",
-    //   });
-
     const newAssessment = await assessment.create({
       lesson,
       questions,

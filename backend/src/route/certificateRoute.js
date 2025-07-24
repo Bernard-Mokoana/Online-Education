@@ -4,9 +4,10 @@ import {
   getCertificate,
   deleteCertificate,
 } from "../controller/certificateController.js";
-import { verifyJwt } from "../middleware/authMiddleware.js";
+import { verifyJwt, studentOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+router.use(verifyJwt, studentOnly);
 
 router.post("/generate/:userId/:courseId", generateCertificate);
 router.get("/:userId", getCertificate);

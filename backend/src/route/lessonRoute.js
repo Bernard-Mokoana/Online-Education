@@ -10,15 +10,17 @@ import { verifyJwt, tutorOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+router.use(verifyJwt);
+
 router
   .route("/course/:courseId")
   .get(getLessonsByCourse)
-  .post(verifyJwt, tutorOnly, createLesson);
+  .post(tutorOnly, createLesson);
 
 router
   .route("/:id")
   .get(getLessonById)
-  .put(verifyJwt, tutorOnly, updateLesson)
-  .delete(verifyJwt, tutorOnly, deleteLesson);
+  .put(tutorOnly, updateLesson)
+  .delete(tutorOnly, deleteLesson);
 
 export default router;

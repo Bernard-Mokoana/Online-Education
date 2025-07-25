@@ -34,8 +34,9 @@ A backend for a personalized online learning platform built with the MERN stack.
 ---
 
 ## 📂 Folder Structure
-├── config/
-├── controllers/
+|--config/
+|--controllers/
+|--models/
 ├── models/
 ├── routes/
 ├── middlewares/

@@ -9,7 +9,7 @@ dotenv.config({
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY;
-const REFRESH_TOKEN_SECRET = process.env.ACCESS_TOKEN_EXPIRY;
+const REFRESH_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY;
 
 export const register = async (req, res) => {
@@ -68,12 +68,21 @@ export const login = async (req, res) => {
       expiresIn: REFRESH_TOKEN_EXPIRY,
     });
 
-    return res.status(200).json({
-      message: "User login successfully ",
-      token,
-      refreshToken,
-      user: { id: User._id, email: User.email },
-    });
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    return res
+      .status(200)
+      .cookie("accessToken", token, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json({
+        message: "User login successfully ",
+        token,
+        refreshToken,
+        user: { id: User._id, email: User.email },
+      });
   } catch (error) {
     return res
       .status(500)
@@ -124,5 +133,36 @@ export const getAllUsers = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Failed to fetch users", error: error.message });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    await user.findByIdAndUpdate(
+      req.user._id,
+      {
+        $unset: {
+          refreshToken: 1,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json({ message: "User logged out successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error during logout", error: error.message });
   }
 };

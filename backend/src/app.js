@@ -9,8 +9,6 @@ dotenv.config({
 
 const app = express();
 
-app.use(cookieParser());
-
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
@@ -18,8 +16,10 @@ app.use(
   })
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(express.static("public"));
+app.use(cookieParser());
 
 import courseRoute from "./route/courseRoute.js";
 import userRoute from "./route/userRoute.js";
@@ -32,6 +32,7 @@ import assessmentRoute from "./route/assessmentRoute.js";
 import reportRoute from "./route/reportRoute.js";
 import certificateRoute from "./route/certificateRoute.js";
 import progressRoute from "./route/progressRoute.js";
+import authRoute from "./route/authRoute.js";
 
 app.use("/api/v1/courses", courseRoute);
 app.use("/api/v1/users", userRoute);
@@ -44,5 +45,6 @@ app.use("/api/v1/assessments", assessmentRoute);
 app.use("/api/v1/reports", reportRoute);
 app.use("/api/v1/certificates", certificateRoute);
 app.use("/api/v1/progress", progressRoute);
+app.use("/api/v1/auth", authRoute);
 
 export default app;

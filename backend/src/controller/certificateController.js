@@ -30,8 +30,6 @@ export const generateCertificate = async (req, res) => {
         message: "course not completed or not all lessons are passed",
       });
 
-    console.log(existingSubmissions);
-
     let average = 0;
     if (existingSubmissions.length > 0) {
       const totalGrade = existingSubmissions.reduce(
@@ -45,8 +43,6 @@ export const generateCertificate = async (req, res) => {
       course: courseId,
       student: userId,
     });
-    // if (existingCertificate)
-    //   return res.status(409).json({ message: "certificate already issued" });
 
     const Certificate = await certificate.create({
       student: userId,

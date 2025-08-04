@@ -16,10 +16,7 @@ const router = express.Router();
 
 router.use(verifyJwt);
 
-router
-  .route("/")
-  .post(tutorOnly, createCourse)
-  .get(studentOnly, tutorOnly, getCourse);
+router.route("/").post(tutorOnly, createCourse).get(getCourse);
 
 router
   .route("/:id")

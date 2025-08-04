@@ -8,7 +8,6 @@ describe("Course API", () => {
   let testTutor;
 
   beforeAll(async () => {
-    // Create a test tutor
     testTutor = await user.create({
       firstName: "Test",
       lastName: "Tutor",

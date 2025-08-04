@@ -11,7 +11,6 @@ describe("Enrollment API", () => {
   let testCourse;
 
   beforeAll(async () => {
-    // Create a test student
     testStudent = await user.create({
       firstName: "Test",
       lastName: "Student",
@@ -20,7 +19,6 @@ describe("Enrollment API", () => {
       role: "Student",
     });
 
-    // Create a test tutor
     testTutor = await user.create({
       firstName: "Test",
       lastName: "Tutor",
@@ -29,7 +27,6 @@ describe("Enrollment API", () => {
       role: "Tutor",
     });
 
-    // Create a test course
     testCourse = await course.create({
       title: "Test Course for Enrollments",
       category: "Testing",
@@ -160,10 +157,8 @@ describe("Enrollment API", () => {
         course: testCourse._id,
       };
 
-      // Create first enrollment
       await enrollment.create(enrollmentData);
 
-      // Try to create second enrollment with same student and course
       try {
         await enrollment.create(enrollmentData);
         fail("Should have thrown a duplicate key error");

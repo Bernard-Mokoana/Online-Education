@@ -1,4 +1,4 @@
-# 🎓 EduConnectSa Backend – MERN Stack Education Platform
+# 🎓 Online Education Backend – MERN Stack Education Platform
 
 A backend for a personalized online learning platform built with the MERN stack. This project powers user authentication, course enrollment, progress tracking, certificates, and insightful reporting using MongoDB aggregations.
 
@@ -46,3 +46,4 @@ A backend for a personalized online learning platform built with the MERN stack.
 ├── index.js
 
 ---
+
